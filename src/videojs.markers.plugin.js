@@ -174,7 +174,9 @@ function registerVideoJsMarkersPlugin(options) {
   }
 
   function getPosition(marker: Marker): number {
-    return (setting.markerTip.time(marker) / player.duration()) * 100;
+    let duration = player.liveTracker.isLive() && player.duration() === Infinity ? player.liveTracker.seekableEnd() : player.duration();
+    if (duration === Infinity) duration = player.liveTracker.liveCurrentTime();
+    return (setting.markerTip.time(marker) / duration) * 100;
   }
 
   function setMarkderDivStyle(marker: Marker, markerDiv: Object): void {
@@ -452,6 +454,14 @@ function registerVideoJsMarkersPlugin(options) {
   // setup the plugin after we loaded video's meta data
   player.on("loadedmetadata", function() {
     initialize();
+  });
+
+  player.on("seekableendchange", function () {
+    updateMarkers(true);
+  });
+
+  player.on("seeked", function () {
+    updateMarkers(true);
   });
 
   // exposed plugin API

@@ -79,6 +79,8 @@ The style of the markers could be modified by passing an optional setting "marke
 ```
 
 ## History
+- 1.0.3
+   - Fix marker positioning when the stream is live and the ui is enabled
 - 1.0.2
    - Fix deprecation warnings for latest version of Video.js (6.8.x)
    - Allow html to be specified for markerTip

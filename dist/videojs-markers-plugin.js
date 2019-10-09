@@ -11,7 +11,7 @@
     global.videojsMarkersPlugin = mod.exports;
   }
 })(this, function (_video) {
-  /*! videojs-markers-plugin - v1.0.2 - 2019-08-23
+  /*! videojs-markers-plugin - v1.0.3 - 2019-10-09
   * Copyright (c) 2019 ; Licensed  */
   'use strict';
 
@@ -185,7 +185,9 @@
     }
 
     function getPosition(marker) {
-      return setting.markerTip.time(marker) / player.duration() * 100;
+      var duration = player.liveTracker.isLive() && player.duration() === Infinity ? player.liveTracker.seekableEnd() : player.duration();
+      if (duration === Infinity) duration = player.liveTracker.liveCurrentTime();
+      return setting.markerTip.time(marker) / duration * 100;
     }
 
     function setMarkderDivStyle(marker, markerDiv) {
@@ -450,6 +452,14 @@
     // setup the plugin after we loaded video's meta data
     player.on("loadedmetadata", function () {
       initialize();
+    });
+
+    player.on("seekableendchange", function () {
+      updateMarkers(true);
+    });
+
+    player.on("seeked", function () {
+      updateMarkers(true);
     });
 
     // exposed plugin API
